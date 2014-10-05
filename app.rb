@@ -6,6 +6,10 @@ require 'logger'
 
 enable :sessions
 
+configure do
+	set :port, 4000
+end
+
 CREDENTIAL_STORE_FILE = "#{$0}-oauth2.json"
 
 def logger; settings.logger end
@@ -19,7 +23,7 @@ def user_credentials
   # which allows us to use a shared API client.
   @authorization ||= (
     auth = api_client.authorization.dup
-    auth.redirect_uri = to('/oauth2callback')
+    auth.redirect_uri = to('http://mlhsg.homelinen.org/oauth2callback')
     auth.update_token!(session)
     auth
   )
@@ -58,7 +62,7 @@ end
 before do
   # Ensure user has authorized the app
   unless user_credentials.access_token || request.path_info =~ /\A\/oauth2/
-    redirect to('/oauth2authorize')
+    redirect to('http://mlhsg.homelinen.org/oauth2authorize')
   end
 end
 
